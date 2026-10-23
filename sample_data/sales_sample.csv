@@ -1,0 +1,16 @@
+Date,SKU,Product Name,Quantity,Unit Price,Customer,Invoice Number
+2026-10-01,DAI-MLK-001,Fresh Whole Milk 1 Gallon,3,3.99,Walk-in Customer,INV-20261001-001
+2026-10-01,BAK-SRD-001,Organic Artisan Sourdough,2,4.99,Walk-in Customer,INV-20261001-001
+2026-10-01,BEV-COF-001,Medium Roast Ground Coffee 12oz,1,11.99,Sarah Jenkins,INV-20261001-002
+2026-10-02,DAI-EGG-003,Free-Range Large Eggs 12pk,2,4.89,Walk-in Customer,INV-20261002-001
+2026-10-02,PRD-BAN-002,Organic Cavendish Bananas,4,1.89,Walk-in Customer,INV-20261002-002
+2026-10-02,DAI-MLK-001,Fresh Whole Milk 1 Gallon,2,3.99,John Doe,INV-20261002-003
+2026-10-03,BEV-WAT-002,Sparkling Mineral Water 750ml,6,2.79,Walk-in Customer,INV-20261003-001
+2026-10-03,SNK-CHP-001,Sea Salt Kettle Cooked Chips 8oz,3,3.79,Walk-in Customer,INV-20261003-002
+2026-10-04,DAI-YOG-002,Greek Yogurt Plain 32oz,2,5.49,Walk-in Customer,INV-20261004-001
+2026-10-04,PRD-APP-001,Honeycrisp Apples 3lb Bag,1,5.99,Emily Clark,INV-20261004-002
+2026-10-05,BAK-CRN-002,Butter Croissant 4-Pack,3,5.99,Walk-in Customer,INV-20261005-001
+2026-10-05,DAI-MLK-001,Fresh Whole Milk 1 Gallon,4,3.99,Walk-in Customer,INV-20261005-002
+2026-10-06,DAI-EGG-003,Free-Range Large Eggs 12pk,3,4.89,Walk-in Customer,INV-20261006-001
+2026-10-06,BEV-COF-001,Medium Roast Ground Coffee 12oz,2,11.99,Michael Chang,INV-20261006-002
+2026-10-07,PRD-BAN-002,Organic Cavendish Bananas,5,1.89,Walk-in Customer,INV-20261007-001

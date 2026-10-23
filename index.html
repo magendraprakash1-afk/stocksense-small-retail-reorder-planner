@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockSense Management — Intelligent Retail Inventory & Demand Forecasting</title>
+  <meta name="description" content="Commercial-grade inventory management, demand forecasting, stockout prevention, and automated purchase reorder generation for retail stores.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <!-- Lucide Icons & Chart.js -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Universal Excel / CSV Spreadsheet Parser (SheetJS) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Universal Barcode & QR Scanner (Camera, File & Image with all access) -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-mobile-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i data-lucide="layers"></i>
+        </div>
+        <div class="sidebar-brand">
+          <h3>StockSense</h3>
+          <span>Sri Lakshmi Supermarket</span>
+        </div>
+        <button class="sidebar-toggle" aria-label="Toggle Sidebar collapse">
+          <i data-lucide="chevron-left"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-label">Core Modules</div>
+          <a href="#overview" class="nav-item active" data-page="overview" title="Overview">
+            <i data-lucide="layout-dashboard"></i>
+            <span class="nav-label">Dashboard Overview</span>
+          </a>
+          <a href="#inventory" class="nav-item" data-page="inventory" title="Inventory">
+            <i data-lucide="package"></i>
+            <span class="nav-label">Inventory Catalog</span>
+          </a>
+          <a href="#forecast" class="nav-item" data-page="forecast" title="Demand Forecast">
+            <i data-lucide="trending-up"></i>
+            <span class="nav-label">Demand Forecast</span>
+          </a>
+          <a href="#reorder" class="nav-item" data-page="reorder" title="Intelligent Reorder Plan">
+            <i data-lucide="refresh-cw"></i>
+            <span class="nav-label">Intelligent Reorder Plan</span>
+            <span class="nav-badge" id="reorderNavBadge" title="Items needing immediate replenishment" style="display:none">0</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-label">Operations</div>
+          <a href="#sales" class="nav-item" data-page="sales" title="Sales & CSV Ingestion">
+            <i data-lucide="receipt"></i>
+            <span class="nav-label">Sales & CSV Ingestion</span>
+          </a>
+          <a href="#suppliers" class="nav-item" data-page="suppliers" title="Suppliers & POs">
+            <i data-lucide="truck"></i>
+            <span class="nav-label">Suppliers & Orders</span>
+          </a>
+          <a href="#reports" class="nav-item" data-page="reports" title="Analytics & Waste Mitigation">
+            <i data-lucide="bar-chart-3"></i>
+            <span class="nav-label">Reports & Analytics</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-label">System</div>
+          <a href="#settings" class="nav-item" data-page="settings" title="Settings & Parameters">
+            <i data-lucide="settings"></i>
+            <span class="nav-label">Settings & Rules</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user" onclick="App.navigateTo('settings')">
+          <div class="sidebar-user-avatar">SK</div>
+          <div class="sidebar-user-info">
+            <div class="name">Suresh Kumar</div>
+            <div class="role">Store Owner</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area Wrapper -->
+    <div class="main-wrapper">
+      <!-- Sticky Topbar Navigation -->
+      <header class="topbar">
+        <button class="mobile-menu-btn" aria-label="Open mobile navigation">
+          <i data-lucide="menu"></i>
+        </button>
+
+        <div class="topbar-shop-select" onclick="App.navigateTo('settings')" title="Switch or configure store">
+          <i data-lucide="store"></i>
+          <span>Sri Lakshmi Supermarket</span>
+        </div>
+
+        <div class="topbar-search">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" id="globalSearchInput" placeholder="Search products, SKUs, suppliers, categories... (Ctrl+K)">
+          <div class="search-actions">
+            <!-- Language Selector Dropdown -->
+            <div class="lang-dropdown-wrapper">
+              <button id="langSelectBtn" class="search-lang-btn" title="Select Voice & UI Language" aria-label="Select language">
+                <span id="currentLangFlag">🇮🇳</span>
+                <span id="currentLangLabel">EN</span>
+                <i data-lucide="chevron-down" class="dropdown-chevron"></i>
+              </button>
+              <div id="langDropdownMenu" class="lang-dropdown-menu"></div>
+            </div>
+
+            <!-- Voice Assistant Microphone Button -->
+            <button id="voiceAssistantBtn" class="search-mic-btn" title="Voice Assistant & Speech Search" aria-label="Voice search">
+              <i data-lucide="mic"></i>
+              <span class="mic-pulse"></span>
+            </button>
+
+            <kbd class="search-kbd">Ctrl K</kbd>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <!-- Full System Language Selector Dropdown -->
+          <div class="topbar-lang-picker" title="Select Full System Language">
+            <i data-lucide="globe"></i>
+            <select id="topbarLanguageSelect" class="topbar-language-select" aria-label="Select System Language">
+              <option value="en">English (English)</option>
+              <option value="ta">தமிழ் (Tamil)</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="te">తెలుగు (Telugu)</option>
+              <option value="kn">ಕನ್ನಡ (Kannada)</option>
+              <option value="ml">മലയാളം (Malayalam)</option>
+              <option value="mr">मराठी (Marathi)</option>
+              <option value="bn">বাংলা (Bengali)</option>
+              <option value="gu">ગુજરાતી (Gujarati)</option>
+              <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+              <option value="or">ଓଡ଼ିଆ (Odia)</option>
+              <option value="as">অসমীয়া (Assamese)</option>
+              <option value="ur">اردو (Urdu)</option>
+              <option value="sa">संस्कृतम् (Sanskrit)</option>
+              <option value="ne">नेपाली (Nepali)</option>
+              <option value="es">Español (Spanish)</option>
+              <option value="fr">Français (French)</option>
+              <option value="de">Deutsch (German)</option>
+              <option value="ar">العربية (Arabic)</option>
+              <option value="zh">中文 (Chinese)</option>
+              <option value="ja">日本語 (Japanese)</option>
+              <option value="ru">Русский (Russian)</option>
+              <option value="pt">Português (Portuguese)</option>
+              <option value="it">Italiano (Italian)</option>
+              <option value="ko">한국어 (Korean)</option>
+              <option value="tr">Türkçe (Turkish)</option>
+              <option value="id">Bahasa Indonesia (Indonesian)</option>
+              <option value="vi">Tiếng Việt (Vietnamese)</option>
+              <option value="th">ไทย (Thai)</option>
+              <option value="fa">فارسی (Persian)</option>
+            </select>
+          </div>
+
+          <button id="generateReorderBtn" class="btn btn-sm btn-primary">
+            <i data-lucide="shopping-cart"></i>
+            <span>Reorder Plan</span>
+            <span id="topbarReorderCount" class="badge badge-warning" style="display:none;margin-left:4px;padding:2px 6px;border-radius:10px;font-size:0.7rem">0</span>
+          </button>
+
+          <button id="themeToggle" class="topbar-btn" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+            <i data-lucide="moon"></i>
+          </button>
+
+          <div class="dropdown" style="position:relative">
+            <button id="notificationBtn" class="topbar-btn" title="View Notifications" aria-label="Notifications">
+              <i data-lucide="bell"></i>
+              <span class="badge"></span>
+            </button>
+            <div class="notification-dropdown">
+              <div class="notification-dropdown-header">
+                <span>Stock Alerts & Notifications</span>
+              </div>
+              <div class="notification-list"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Google Website Translator Toolbar (Toggleable) -->
+      <div id="google_translate_element" style="display:none"></div>
+
+      <!-- Dynamic Page Container -->
+      <main class="main-content">
+        <div id="pageContent"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Global Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Google Website Translator API -->
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <!-- Application Modules -->
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/voice-assistant.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/forecast.js"></script>
+  <script src="js/reorder.js"></script>
+  <script src="js/sales.js"></script>
+  <script src="js/suppliers.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>
